@@ -1,20 +1,38 @@
 version: '3.8'
 
 services:
-  progress-service:
+  user-service:
     build:
       context: .
-      dockerfile: ./apps/progress-service/Dockerfile
+      dockerfile: ./apps/user-service/Dockerfile
     ports:
       - '3001:3001'
     environment:
       - NODE_ENV=production
 
-  microservice2:
+  progress-service:
     build:
       context: .
-      dockerfile: ./apps/microservice2/Dockerfile
+      dockerfile: ./apps/progress-service/Dockerfile
     ports:
       - '3002:3002'
     environment:
       - NODE_ENV=production
+
+  puzzle-service:
+    build:
+      context: .
+      dockerfile: ./apps/puzzle-service/Dockerfile
+    ports:
+      - '3003:3003'
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis_db
+
+  redis_db:
+    image: redis
+    ports:
+      - '6379:6379'
+    
+  

@@ -1,5 +1,5 @@
 # Step 1: Use Node.js base image
-FROM node:22-slim
+FROM node:23-alpine
 
 # Step 2: Install pnpm globally
 RUN npm install -g pnpm
@@ -19,12 +19,18 @@ RUN pnpm install --frozen-lockfile
 # Step 7: Copy only the specific microservice's code
 COPY apps/user-service ./apps/user-service
 
-# Step 8: Build the NestJS application for the specific microservice
+# Important: Also copy the shared tsconfig.json if it's in the root (if applicable)
+COPY tsconfig.json .
+
+# Step 8: Move to the microservice directory and add the specific microservice's tsconfig.json
 WORKDIR /app/apps/user-service
+COPY apps/user-service/tsconfig.app.json .
+
+# Step 9: Build the NestJS application for the specific microservice
 RUN pnpm build:user
 
-# Step 9: Expose the appropriate port (adjust based on service)
+# Step 10: Expose the appropriate port (adjust based on service)
 EXPOSE 3001
 
-# Step 10: Start the microservice
+# Step 11: Start the microservice
 CMD ["pnpm", "prod:user"]
