@@ -35,7 +35,7 @@ COPY --chown=nonroot:nonroot tsconfig.json .
 
 # Move to the microservice directory and add the specific microservice's tsconfig.json
 WORKDIR /app/apps/progress-service
-COPY --chown=nonroot:nonroot apps/puzzle-progress/tsconfig.app.json .
+COPY --chown=nonroot:nonroot apps/progress-service/tsconfig.app.json .
 
 # Build the NestJS application for the specific microservice
 RUN pnpm build:progress
