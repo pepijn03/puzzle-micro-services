@@ -37,8 +37,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
     - run: pnpm install
-    - run: pnpm build:user --if-present 
-    - run: pnpm test:user --if-present   
+    - run: pnpm build:user
+    - run: pnpm test
 
 
   push-image-to-dockerhub:
