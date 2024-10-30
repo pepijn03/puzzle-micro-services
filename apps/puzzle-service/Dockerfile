@@ -33,4 +33,4 @@ RUN pnpm build:puzzle
 EXPOSE 3003
 
 # Step 11: Start the microservice
-CMD ["pnpm", "prod:puzzle"]
+CMD ["pnpm", "start:puzzle"]

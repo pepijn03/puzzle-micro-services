@@ -33,4 +33,4 @@ RUN pnpm build:user
 EXPOSE 3001
 
 # Step 11: Start the microservice
-CMD ["pnpm", "prod:user"]
+CMD ["pnpm", "start:user"]

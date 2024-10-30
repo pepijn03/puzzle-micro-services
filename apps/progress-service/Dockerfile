@@ -33,4 +33,4 @@ RUN pnpm build:progress
 EXPOSE 3002
 
 # Step 11: Start the microservice
-CMD ["pnpm", "prod:progress"]
+CMD ["pnpm", "start:progress"]
