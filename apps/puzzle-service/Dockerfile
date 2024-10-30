@@ -1,42 +1,48 @@
-# Step 1: Use Node.js base image and configure non root user
+# Use Node.js base image and configure non root user
 FROM node:23-alpine
 
+# Set the nonroot user and group
 RUN addgroup -S nonroot \
     && adduser -S nonroot -G nonroot
 
 USER nonroot
 
+# Set ignore-scripts for npm to true to prevent running scripts during install for security
+RUN npm config set ignore-scripts true
 
-# Step 2: Install pnpm globally
-RUN npm install -g pnpm --ignore-scripts
+# Install pnpm globally
+RUN npm install -g pnpm
 
-# Step 3: Set the root working directory for the workspace
+# Set ignore-scripts for pnpm to true to prevent running scripts during install for security
+RUN pnpm config set ignore-scripts true+
+
+# Set the root working directory for the workspace
 WORKDIR /app
 
-# Step 4: Copy over shared package.json and pnpm-lock.yaml files
+# Copy over shared package.json and pnpm-lock.yaml files
 COPY package.json pnpm-lock.yaml ./
 
-# Step 5: Copy over pnpm workspace config
+# Copy over pnpm workspace config
 COPY pnpm-workspace.yaml ./
 
-# Step 6: Install dependencies with pnpm in offline mode, optimizing layer reuse
-RUN pnpm install --frozen-lockfile --ignore-scripts
+# Install dependencies with pnpm in offline mode, optimizing layer reuse
+RUN pnpm install --frozen-lockfile
 
-# Step 7: Copy only the specific microservice's code
+# Copy only the specific microservice's code
 COPY apps/puzzle-service ./apps/puzzle-service
 
 # Important: Also copy the shared tsconfig.json if it's in the root (if applicable)
 COPY tsconfig.json .
 
-# Step 8: Move to the microservice directory and add the specific microservice's tsconfig.json
+# Move to the microservice directory and add the specific microservice's tsconfig.json
 WORKDIR /app/apps/puzzle-service
 COPY apps/puzzle-service/tsconfig.app.json .
 
-# Step 9: Build the NestJS application for the specific microservice
+# Build the NestJS application for the specific microservice
 RUN pnpm build:puzzle
 
-# Step 10: Expose the appropriate port (adjust based on service)
+# Expose the appropriate port (adjust based on service)
 EXPOSE 3003
 
-# Step 11: Start the microservice
+# Start the microservice
 CMD ["pnpm", "start:puzzle"]
