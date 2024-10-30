@@ -1,8 +1,14 @@
-# Step 1: Use Node.js base image
+# Step 1: Use Node.js base image and configure non root user
 FROM node:23-alpine
 
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+USER nonroot
+
+
 # Step 2: Install pnpm globally
-RUN npm install -g pnpm
+RUN npm install -g pnpm --ignore-scripts
 
 # Step 3: Set the root working directory for the workspace
 WORKDIR /app
@@ -14,7 +20,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 
 # Step 6: Install dependencies with pnpm in offline mode, optimizing layer reuse
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Step 7: Copy only the specific microservice's code
 COPY apps/puzzle-service ./apps/puzzle-service
