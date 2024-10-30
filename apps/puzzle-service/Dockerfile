@@ -1,47 +1,46 @@
-# Use Node.js base image and configure non root user
+# Use Node.js base image
 FROM node:23-alpine
 
-# Set the nonroot user and group
-RUN addgroup -S nonroot \
-    && adduser -S nonroot -G nonroot
+# First install pnpm globally as root
+RUN npm config set ignore-scripts true && \
+    npm install -g pnpm && \
+    pnpm config set ignore-scripts true
 
+# Create non-root user and set ownership
+RUN addgroup -S nonroot && \
+    adduser -S nonroot -G nonroot && \
+    mkdir -p /app && \
+    chown -R nonroot:nonroot /app
+
+# Switch to non-root user
 USER nonroot
 
-# Set ignore-scripts for npm to true to prevent running scripts during install for security
-RUN npm config set ignore-scripts true
-
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# Set ignore-scripts for pnpm to true to prevent running scripts during install for security
-RUN pnpm config set ignore-scripts true+
-
-# Set the root working directory for the workspace
+# Set the working directory
 WORKDIR /app
 
 # Copy over shared package.json and pnpm-lock.yaml files
-COPY package.json pnpm-lock.yaml ./
+COPY --chown=nonroot:nonroot package.json pnpm-lock.yaml ./
 
 # Copy over pnpm workspace config
-COPY pnpm-workspace.yaml ./
+COPY --chown=nonroot:nonroot pnpm-workspace.yaml ./
 
-# Install dependencies with pnpm in offline mode, optimizing layer reuse
+# Install dependencies with pnpm in offline mode
 RUN pnpm install --frozen-lockfile
 
 # Copy only the specific microservice's code
-COPY apps/puzzle-service ./apps/puzzle-service
+COPY --chown=nonroot:nonroot apps/puzzle-service ./apps/puzzle-service
 
-# Important: Also copy the shared tsconfig.json if it's in the root (if applicable)
-COPY tsconfig.json .
+# Copy the shared tsconfig.json if it's in the root
+COPY --chown=nonroot:nonroot tsconfig.json .
 
 # Move to the microservice directory and add the specific microservice's tsconfig.json
 WORKDIR /app/apps/puzzle-service
-COPY apps/puzzle-service/tsconfig.app.json .
+COPY --chown=nonroot:nonroot apps/puzzle-service/tsconfig.app.json .
 
 # Build the NestJS application for the specific microservice
 RUN pnpm build:puzzle
 
-# Expose the appropriate port (adjust based on service)
+# Expose the appropriate port
 EXPOSE 3003
 
 # Start the microservice
