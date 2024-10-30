@@ -6,11 +6,15 @@ RUN npm config set ignore-scripts true && \
     npm install -g pnpm && \
     pnpm config set ignore-scripts true
 
-# Create non-root user and set ownership
+# Create non-root user and set specific directories with minimal permissions
 RUN addgroup -S nonroot && \
     adduser -S nonroot -G nonroot && \
-    mkdir -p /app && \
-    chown -R nonroot:nonroot /app
+    mkdir -p /app/node_modules && \
+    mkdir -p /app/dist && \
+    mkdir -p /app/.pnpm-store && \
+    chown -R nonroot:nonroot /app/node_modules && \
+    chown -R nonroot:nonroot /app/dist && \
+    chown -R nonroot:nonroot /app/.pnpm-store
 
 # Switch to non-root user
 USER nonroot
@@ -18,27 +22,22 @@ USER nonroot
 # Set the working directory
 WORKDIR /app
 
-# Copy over shared package.json and pnpm-lock.yaml files
-COPY --chown=nonroot:nonroot package.json pnpm-lock.yaml ./
+# Copy over shared package.json and pnpm-lock.yaml files with read-only permissions
+COPY --chown=nonroot:nonroot --chmod=444 package.json pnpm-lock.yaml ./
 
-# Copy over pnpm workspace config
-COPY --chown=nonroot:nonroot pnpm-workspace.yaml ./
+# Copy over pnpm workspace config with read-only permissions
+COPY --chown=nonroot:nonroot --chmod=444 pnpm-workspace.yaml ./
 
 # Install dependencies with pnpm in offline mode
 RUN pnpm install --frozen-lockfile
 
-# Copy only the specific microservice's code
-COPY --chown=nonroot:nonroot apps/user-service ./apps/user-service
+# Copy source code with read-only permissions
+COPY --chown=nonroot:nonroot --chmod=444 apps/user-service ./apps/user-service
+COPY --chown=nonroot:nonroot --chmod=444 tsconfig.json .
+COPY --chown=nonroot:nonroot --chmod=444 apps/user-service/tsconfig.app.json .
 
-# Copy the shared tsconfig.json if it's in the root
-COPY --chown=nonroot:nonroot tsconfig.json .
-
-# Move to the microservice directory and add the specific microservice's tsconfig.json
-WORKDIR /app/apps/user-service
-COPY --chown=nonroot:nonroot apps/user-service/tsconfig.app.json .
-
-# Build the NestJS application for the specific microservice
-RUN pnpm build:progress
+# Build the NestJS application
+RUN pnpm build:user
 
 # Expose the appropriate port
 EXPOSE 3001
