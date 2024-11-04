@@ -28,7 +28,7 @@ describe('PuzzleController', () => {
         it('should return a single puzzle', async () => {
           const result : puzzle = {id : 1, date: '2024-10-07', verticalHints: ["vhint1", "vhint2", "vhint3"], horizontalHints: ["hhint1", "hhint2", "hhint3"], answer: ["word1", "word2", "word3"]};
           jest.spyOn(puzzleController, 'getPuzzle').mockImplementation(() => Promise.resolve(result));
-          expect(await puzzleController.getPuzzle(1)).toBe(result);
+          expect(await puzzleController.getPuzzle("1")).toBe(result);
         });
       });
   });
