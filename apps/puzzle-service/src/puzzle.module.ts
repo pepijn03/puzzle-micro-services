@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RabbitMQProducerService } from './producer.service';
 import { RabbitMQConsumerService } from './consumer.service';
+import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 
 // Load the dotenv dependency and call the config method on the imported object
 require('dotenv').config();
@@ -18,6 +19,7 @@ console.log('Connecting to RabbitMQ at:', process.env.MBUS_URI);
 
 @Module({
   imports: [HttpModule, 
+    PrometheusModule.register(),
     ConfigModule.forRoot({
       envFilePath: '../../.env',
     }),

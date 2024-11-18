@@ -1,7 +1,7 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { puzzle } from '../objects/puzzle.interface';
+import { Puzzle } from '../objects/puzzle.interface';
 const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
 
 // Load the dotenv dependency and call the config method on the imported object
@@ -25,17 +25,17 @@ export class PuzzleService {
         @Inject(CACHE_MANAGER) private cacheService: Cache,
     ) {}
 
-    async getAllPuzzles(): Promise<puzzle[]> {
+    async getAllPuzzles(): Promise<Puzzle[]> {
         await client.connect();
         const res = await coll
             .find()
-            .toArray() as puzzle[];
+            .toArray() as Puzzle[];
         return res;
     }
 
-    async getPuzzle(id:string): Promise<puzzle> {
+    async getPuzzle(id:string): Promise<Puzzle> {
         // check if data is in cache:
-        const cachedData = await this.cacheService.get<{ puzzle: puzzle }>(id.toString());
+        const cachedData = await this.cacheService.get<{ puzzle: Puzzle }>(id.toString());
         if (cachedData) {
             console.log(`Getting data from cache!`);
             return cachedData.puzzle;
@@ -44,7 +44,7 @@ export class PuzzleService {
             // if not, call data and set the cache: 
             // search in the database
             const res = await coll
-                .findOne({_id: new ObjectId(id)}) as puzzle;
+                .findOne({_id: new ObjectId(id)}) as Puzzle;
 
 
             // set the cache:            
@@ -54,10 +54,10 @@ export class PuzzleService {
         }
     }
 
-    async getPuzzleByDate(day: string): Promise<puzzle> {
+    async getPuzzleByDate(day: string): Promise<Puzzle> {
         await client.connect();
         const res = await coll
-            .findOne({date: day}) as puzzle;
+            .findOne({date: day}) as Puzzle;
         return res;
     }
 }

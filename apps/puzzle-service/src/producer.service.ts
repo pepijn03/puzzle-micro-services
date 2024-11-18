@@ -9,6 +9,6 @@ export class RabbitMQProducerService {
 
   async sendMessage(pattern: string, message: any) {
     console.log('Sending message:', message);
-    return await firstValueFrom(this.client.send(pattern, message));
+    return await this.client.send(pattern, message).toPromise();
   }
 }
