@@ -1,12 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller()
 export class UserController {
-  constructor(private readonly userServiceService: UserService) {}
+  private readonly logger = new Logger(UserController.name);
+
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   getUsers(): string {
-    return this.userServiceService.getUsers();
+    this.logger.log('Fetching all users');
+    const users = this.userService.getUsers();
+    this.logger.log(`Fetched users: ${users}`);
+    return users;
   }
 }

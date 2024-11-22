@@ -27,6 +27,7 @@ export class PuzzleService {
 
     async getAllPuzzles(): Promise<Puzzle[]> {
         await client.connect();
+        console.debug(`Connected to MongoDB!`);
         const res = await coll
             .find()
             .toArray() as Puzzle[];
@@ -37,7 +38,7 @@ export class PuzzleService {
         // check if data is in cache:
         const cachedData = await this.cacheService.get<{ puzzle: Puzzle }>(id.toString());
         if (cachedData) {
-            console.log(`Getting data from cache!`);
+            console.debug(`Getting data from cache!`);
             return cachedData.puzzle;
         }
         else {
@@ -49,7 +50,7 @@ export class PuzzleService {
 
             // set the cache:            
             await this.cacheService.set(id.toString(), res);
-            console.log(`Put data in cache!`);
+            console.debug(`Put data in cache!`);
             return res;
         }
     }
