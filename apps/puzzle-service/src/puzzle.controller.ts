@@ -1,7 +1,6 @@
 import { Controller, Get, Param, Post, Body, UseInterceptors, Logger } from '@nestjs/common';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { PuzzleService } from './puzzle.service';
-import { RabbitMQProducerService } from './producer.service';
 import { Puzzle } from '../objects/puzzle.interface';
 
 @Controller()
@@ -10,7 +9,6 @@ export class PuzzleController {
 
   constructor(
     private readonly service: PuzzleService,
-    private readonly producerService: RabbitMQProducerService
   ) {}
 
   @CacheTTL(30) // override TTL to 30 seconds
@@ -42,11 +40,11 @@ export class PuzzleController {
     return puzzle;
   }
 
-  @Post('/msg')
-  async sendMessage(@Body() message: any) {
-    this.logger.log(`Sending message: ${JSON.stringify(message)}`);
-    await this.producerService.sendMessage('my_pattern', message);
-    this.logger.log('Message sent');
-    return { status: 'Message sent' };
+  @Post('/add')
+  async addPuzzle(@Body() puzzle: Puzzle): Promise<string> {
+    this.logger.log('Adding a new puzzle');
+    await this.service.addPuzzle(puzzle);
+    this.logger.log(`Added puzzle for date: ${puzzle.date}`);
+    return `Added puzzle for date: ${puzzle.date}`;
   }
 }

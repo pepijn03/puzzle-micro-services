@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Puzzle } from '../objects/puzzle.interface';
 const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
+import { ClientProxy } from '@nestjs/microservices';
 
 // Load the dotenv dependency and call the config method on the imported object
 require('dotenv').config();
@@ -22,6 +23,7 @@ const coll = client.db(process.env.DATABASE).collection(process.env.COLLECTION);
 @Injectable()
 export class PuzzleService {
     constructor(
+        @Inject('RABBITMQ_CLIENT') private client: ClientProxy,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
     ) {}
 
@@ -60,5 +62,17 @@ export class PuzzleService {
         const res = await coll
             .findOne({date: day}) as Puzzle;
         return res;
+    }
+
+    async addPuzzle(puzzle: Puzzle): Promise<void> {
+        await client.connect();
+        await coll.insertOne(puzzle);
+        console.debug('Puzzle added to database!');
+        this.publishPuzzleEvent(puzzle);
+    }
+
+    // Example method to publish a message
+    async publishPuzzleEvent(puzzle: Puzzle) {
+        return this.client.emit('puzzle_created', puzzle);
     }
 }
