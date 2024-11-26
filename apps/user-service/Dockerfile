@@ -1,13 +1,11 @@
 # Use Node.js base image
 FROM node:23-alpine
 
-# First install pnpm globally as root
+# First install pnpm globally as root and create non-root user and set ownership
 RUN npm config set ignore-scripts true && \
     npm install -g pnpm && \
-    pnpm config set ignore-scripts true
-
-# Create non-root user and set ownership
-RUN addgroup -S nonroot && \
+    pnpm config set ignore-scripts true && \
+    addgroup -S nonroot && \
     adduser -S nonroot -G nonroot && \
     mkdir -p /app && \
     chown -R nonroot:nonroot /app

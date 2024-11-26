@@ -1,7 +1,6 @@
-import { Controller } from '@nestjs/common';
-import { EventPattern, Payload, MessagePattern } from '@nestjs/microservices';
+import { Controller, Logger } from '@nestjs/common';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import { Puzzle } from '../objects/puzzle.interface';
-import { Logger } from '@nestjs/common';
 
 @Controller()
 export class PuzzleConsumer {
