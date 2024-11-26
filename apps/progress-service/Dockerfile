@@ -4,7 +4,7 @@ FROM node:23-alpine
 # First install pnpm globally as root and create non-root user and set ownership
 RUN npm config set ignore-scripts true && \
     npm install -g pnpm && \
-    pnpm config set ignore-scripts true \
+    pnpm config set ignore-scripts true && \
     addgroup -S nonroot && \
     adduser -S nonroot -G nonroot && \
     mkdir -p /app && \
