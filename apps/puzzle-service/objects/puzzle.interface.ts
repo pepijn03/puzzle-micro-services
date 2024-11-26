@@ -1,5 +1,5 @@
-export interface puzzle {
-    id: number;
+export interface Puzzle {
+    id: string;
     date: string;
     verticalHints: Array<string>;
     horizontalHints: Array<string>;

@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  dev:
+    container_name: puzzle-micro-services-dev
+    user-service:
+      build:
+        context: .
+        dockerfile: ./apps/user-service/Dockerfile        
+      ports:
+        - '3001:3001'
+
+    progress-service:
+      build:
+        context: .
+        dockerfile: ./apps/progress-service/Dockerfile
+      ports:
+        - '3002:3002'
+
+    puzzle-service:
+      build:
+        context: .
+        dockerfile: ./apps/puzzle-service/Dockerfile
+      ports:
+        - '3003:3003'
+      environment:
+        - REDIS_URL=redis://host.docker.internal:6379
+        - MONGO_URI=${MONGODB_URI}
+        - DATABASE=${DATABASE}
+        - COLLECTION=${COLLECTION}
+        - MBUS_URI=${MBUS_URI}
+      depends_on:
+        - redis_db
+
+    redis_db:
+      image: redis
+      ports:
+        - '6379:6379'
+
+  prod:
+    container_name: puzzle-micro-services-prod
+    user-service:
+    build:
+      context: .
+      dockerfile: ./apps/user-service/Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      - NODE_ENV=production
+
+  progress-service:
+    build:
+      context: .
+      dockerfile: ./apps/progress-service/Dockerfile
+    ports:
+      - '3002:3002'
+    environment:
+      - NODE_ENV=production
+
+  puzzle-service:
+    build:
+      context: .
+      dockerfile: ./apps/puzzle-service/Dockerfile
+    ports:
+      - '3003:3003'
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://host.docker.internal:6379
+      - MONGO_URI=${MONGODB_URI}
+      - DATABASE=${DATABASE}
+      - COLLECTION=${COLLECTION}
+      - MBUS_URI=${MBUS_URI}
+    depends_on:
+      - redis_db
+
+  redis_db:
+    image: redis
+    ports:
+      - '6379:6379'
+  
+    
+  

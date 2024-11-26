@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 
 @Module({
-  imports: [],
+  imports: [PrometheusModule.register()],
   controllers: [UserController],
   providers: [UserService],
 })
