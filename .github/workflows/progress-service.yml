@@ -4,9 +4,6 @@
 name: Progress Service CI
 
 on:
-  push:
-    paths:
-      - 'apps/progress-service/**'
   pull_request:
     branches: [ "main", "dev" ]
 

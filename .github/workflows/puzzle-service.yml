@@ -4,9 +4,6 @@
 name: Puzzle Service CI
 
 on:
-  push:
-    paths:
-      - 'apps/puzzle-service/**'
   pull_request:
     branches: [ "main", "dev" ]
 

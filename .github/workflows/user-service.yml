@@ -4,9 +4,6 @@
 name: User Service CI
 
 on:
-  push:
-    paths:
-      - 'apps/user-service/**'
   pull_request:
     branches: [ "main", "dev" ]
 
