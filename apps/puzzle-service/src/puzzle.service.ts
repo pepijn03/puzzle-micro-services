@@ -2,20 +2,19 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Puzzle } from '../objects/puzzle.interface';
-import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
-
+import { MongoClient, ObjectId } from 'mongodb';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class PuzzleService {
-    private collection: any;
+    private readonly collection: any;
 
     constructor(
-        @Inject('RABBITMQ_CLIENT') private mbusClient: ClientProxy,
-        @Inject(CACHE_MANAGER) private cacheService: Cache,
-        @Inject('MONGO_CLIENT') private mongoClient: MongoClient,
-        @Inject('DATABASE_NAME') private databaseName: string,
-        @Inject('COLLECTION_NAME') private collectionName: string
+        @Inject('RABBITMQ_CLIENT') private readonly mbusClient: ClientProxy,
+        @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+        @Inject('MONGO_CLIENT') private readonly mongoClient: MongoClient,
+        @Inject('DATABASE_NAME') private readonly databaseName: string,
+        @Inject('COLLECTION_NAME') private readonly collectionName: string
     ) {
         this.collection = this.mongoClient.db(this.databaseName).collection(this.collectionName);
     }

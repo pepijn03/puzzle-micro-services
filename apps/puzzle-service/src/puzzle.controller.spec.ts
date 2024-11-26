@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient } from 'mongodb';
 import { PuzzleController } from './puzzle.controller';
 import { PuzzleService } from './puzzle.service';
 import { Puzzle } from '../objects/puzzle.interface';
