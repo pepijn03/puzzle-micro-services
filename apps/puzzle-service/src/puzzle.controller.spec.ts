@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoClient, Db, Collection } from 'mongodb';
 import { PuzzleController } from './puzzle.controller';
 import { PuzzleService } from './puzzle.service';
-import { RabbitMQProducerService } from './producer.service';
 import { Puzzle } from '../objects/puzzle.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
@@ -41,7 +40,6 @@ class MockCollection {
 describe('PuzzleController', () => {
   let puzzleController: PuzzleController;
   let puzzleService: PuzzleService;
-  let rabbitMQProducerService: RabbitMQProducerService;
   let mockMongoClient: MockMongoClient;
   let mockCollection: MockCollection;
 
@@ -78,12 +76,6 @@ describe('PuzzleController', () => {
           inject: [MongoClient]
         },
         {
-          provide: RabbitMQProducerService,
-          useValue: {
-            sendMessage: jest.fn()
-          }
-        },
-        {
           provide: CACHE_MANAGER,
           useValue: {}
         }
@@ -92,7 +84,6 @@ describe('PuzzleController', () => {
 
     puzzleController = module.get<PuzzleController>(PuzzleController);
     puzzleService = module.get<PuzzleService>(PuzzleService);
-    rabbitMQProducerService = module.get<RabbitMQProducerService>(RabbitMQProducerService);
   });
 
   describe('getAllPuzzles', () => {
@@ -159,18 +150,6 @@ describe('PuzzleController', () => {
 
       const result = await puzzleController.getPuzzleByDate('2024-01-01');
       expect(result).toBeNull();
-    });
-  });
-
-  describe('sendMessage', () => {
-    it('should send a message via RabbitMQ', async () => {
-      const message = { test: 'message' };
-      const sendMessageSpy = jest.spyOn(rabbitMQProducerService, 'sendMessage').mockResolvedValue(undefined);
-
-      const result = await puzzleController.sendMessage(message);
-      
-      expect(sendMessageSpy).toHaveBeenCalledWith('my_pattern', message);
-      expect(result).toEqual({ status: 'Message sent' });
     });
   });
 });
