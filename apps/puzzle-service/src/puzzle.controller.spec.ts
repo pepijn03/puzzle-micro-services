@@ -7,7 +7,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 // Mock MongoDB Classes
 class MockMongoClient {
-  private mockDb: MockDb;
+  private readonly mockDb: MockDb;
 
   constructor() {
     this.mockDb = new MockDb();
