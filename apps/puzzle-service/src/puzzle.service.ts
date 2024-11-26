@@ -2,38 +2,30 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Puzzle } from '../objects/puzzle.interface';
-const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
-
-// Load the dotenv dependency and call the config method on the imported object
-require('dotenv').config();
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(process.env.MONGODB_URI, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    }
-  });
-
-// Set the collection
-const coll = client.db(process.env.DATABASE).collection(process.env.COLLECTION);
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 
 @Injectable()
 export class PuzzleService {
+    private collection: any;
+
     constructor(
         @Inject(CACHE_MANAGER) private cacheService: Cache,
-    ) {}
+        @Inject('MONGO_CLIENT') private client: MongoClient,
+        @Inject('DATABASE_NAME') private databaseName: string,
+        @Inject('COLLECTION_NAME') private collectionName: string
+    ) {
+        this.collection = this.client.db(this.databaseName).collection(this.collectionName);
+    }
 
     async getAllPuzzles(): Promise<Puzzle[]> {
-        await client.connect();
-        const res = await coll
+        await this.client.connect();
+        const res = await this.collection
             .find()
             .toArray() as Puzzle[];
         return res;
     }
 
-    async getPuzzle(id:string): Promise<Puzzle> {
+    async getPuzzle(id: string): Promise<Puzzle> {
         // check if data is in cache:
         const cachedData = await this.cacheService.get<{ puzzle: Puzzle }>(id.toString());
         if (cachedData) {
@@ -43,9 +35,8 @@ export class PuzzleService {
         else {
             // if not, call data and set the cache: 
             // search in the database
-            const res = await coll
-                .findOne({_id: new ObjectId(id)}) as Puzzle;
-
+            const res = await this.collection
+                .findOne({ _id: new ObjectId(id) }) as Puzzle;
 
             // set the cache:            
             await this.cacheService.set(id.toString(), res);
@@ -55,9 +46,9 @@ export class PuzzleService {
     }
 
     async getPuzzleByDate(day: string): Promise<Puzzle> {
-        await client.connect();
-        const res = await coll
-            .findOne({date: day}) as Puzzle;
+        await this.client.connect();
+        const res = await this.collection
+            .findOne({ date: day }) as Puzzle;
         return res;
     }
 }
