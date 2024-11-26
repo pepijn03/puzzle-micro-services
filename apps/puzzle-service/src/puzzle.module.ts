@@ -7,8 +7,8 @@ import * as redisStore from 'cache-manager-redis-store';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrometheusModule } from "@willsoto/nestjs-prometheus";
+import { MongoClient, ServerApiVersion } from 'mongodb';
 import { PuzzleConsumer } from './puzzle.consumer';
-
 // Load the dotenv dependency and call the config method on the imported object
 require('dotenv').config();
 
@@ -42,7 +42,26 @@ console.log('Connecting to RabbitMQ at:', process.env.MBUS_URI);
     ]),
   ],
   controllers: [PuzzleController],
-  providers: [PuzzleService, PuzzleConsumer],
+  providers: [PuzzleService, {
+    provide: 'MONGO_CLIENT',
+    useFactory: () => {
+      return new MongoClient(process.env.MONGODB_URI || '', {
+        serverApi: {
+          version: ServerApiVersion.v1,
+          strict: true,
+          deprecationErrors: true,
+        }
+      });
+    }
+  },
+  {
+    provide: 'DATABASE_NAME',
+    useValue: process.env.DATABASE || 'defaultDatabase'
+  },
+  {
+    provide: 'COLLECTION_NAME',
+    useValue: process.env.COLLECTION || 'defaultCollection'
+  }, PuzzleConsumer],
   exports: [],
 })
 export class PuzzleServiceModule {}
