@@ -26,8 +26,14 @@ export class PuzzleController {
   async getPuzzle(@Param('id') id: string): Promise<Puzzle> {
     this.logger.log(`Fetching puzzle with id: ${id}`);
     const puzzle = await this.service.getPuzzle(id);
-    this.logger.log(`Fetched puzzle with id: ${puzzle.id}`);
+    if(!puzzle) {
+      this.logger.log(`No puzzle found with id: ${id}`);
+      return null;
+    }
+    else{
+      this.logger.log(`Fetched puzzle with id: ${puzzle.id}`);
     return puzzle;
+    }
   }
 
   @UseInterceptors(CacheInterceptor) // Automatically cache the response for this endpoint
@@ -36,8 +42,14 @@ export class PuzzleController {
   async getPuzzleByDate(@Param('day') day: string): Promise<Puzzle> {
     this.logger.log(`Fetching puzzle for date: ${day}`);
     const puzzle = await this.service.getPuzzleByDate(day);
-    this.logger.log(`Fetched puzzle with date: ${puzzle.date}`);
-    return puzzle;
+    if(!puzzle) {
+      this.logger.log(`No puzzle found for date: ${day}`);
+      return null;
+    }
+    else {
+      this.logger.log(`Fetched puzzle with date: ${puzzle.date}`);
+      return puzzle;
+    }
   }
 
   @Post('/add')
