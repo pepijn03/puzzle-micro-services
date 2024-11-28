@@ -15,6 +15,7 @@ require('dotenv').config();
 // Log the Redis URL to verify it's being read correctly
 console.log('Connecting to Redis at:', process.env.REDIS_URI);
 console.log('Connecting to RabbitMQ at:', process.env.MBUS_URI);
+console.log('Connecting to MongoDB at:', process.env.MONGODB_URI);
 
 @Module({
   imports: [HttpModule, 
