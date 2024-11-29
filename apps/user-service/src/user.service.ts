@@ -1,14 +1,16 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../objects/user.entity';
 import { FriendEntity } from '../objects/friend.entity';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
   constructor(
+    @Inject('RABBITMQ_CLIENT') private readonly mbusClient: ClientProxy,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     @InjectRepository(FriendEntity)

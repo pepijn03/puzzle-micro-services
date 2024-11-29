@@ -14,7 +14,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: [process.env.MBUS_URI],
-      queue: 'main_queue',
+      queue: 'puzzles',
       queueOptions: {
         durable: false
       }
