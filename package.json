@@ -12,16 +12,19 @@
     "dev:progress": "nest start progress-service --watch",
     "debug:progress": "nest start progress-service --debug --watch",
     "prod:progress": "node dist/apps/progress-service/main",
+
     "build:puzzle": "nest build puzzle-service",
     "start:puzzle": "nest start puzzle-service",
     "dev:puzzle": "nest start puzzle-service --watch",
     "debug:puzzle": "nest start puzzle-service --debug --watch",
     "prod:puzzle": "node dist/apps/puzzle-service/main",
+
     "build:user": "nest build user-service",
     "start:user": "nest start user-service",
     "dev:user": "nest start user-service --watch",
     "debug:user": "nest start user-service --debug --watch",
     "prod:user": "node dist/apps/user-service/main",
+
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
