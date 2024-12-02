@@ -8,4 +8,12 @@ export class ProgressService {
   getProgress(): string {
     return 'Here is the progress!';
   }
+
+  deleteProgress(userid: number, puzzleid: number): string {
+    return 'Progress deleted!';
+  }
+
+  deleteProgressByUser(userid: number): string {
+    return 'Progress of user deleted!';
+  }
 }

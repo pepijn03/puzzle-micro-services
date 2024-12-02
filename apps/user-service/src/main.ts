@@ -14,7 +14,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: [process.env.MBUS_URI],
-      queue: 'users',
+      queue: 'User',
       queueOptions: {
         durable: false
       }

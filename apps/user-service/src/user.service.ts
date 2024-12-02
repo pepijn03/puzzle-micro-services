@@ -138,4 +138,21 @@ export class UserService {
       throw error;
     }
   }
+
+  async deleteUser(id: number): Promise<void> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+
+      await this.userRepository.delete(id);
+      this.logger.log(`Deleted user with ID ${id}`);
+      this.mbusClient.emit('UserRemoved', { id });
+    } catch (error) {
+      this.logger.error(`Failed to delete user with ID ${id}`, error.stack);
+      throw error;
+    }
+  }
 }
