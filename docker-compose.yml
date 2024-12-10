@@ -29,7 +29,23 @@ services:
       - REDIS_URI=redis://redis_db:6379
       - MONGODB_URI=${MONGODB_URI}
       - DATABASE=${DATABASE}
-      - COLLECTION=${COLLECTION}
+      - COLLECTION=${PUZZLE_COLLECTION}
+      - MBUS_URI=${MBUS_URI}
+    depends_on:
+      - redis_db
+    networks:
+      - microservices
+
+  result-service:
+    build:
+      context: .
+      dockerfile: ./apps/result-service/Dockerfile
+    ports:
+      - '3004:3004'
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - DATABASE=${DATABASE}
+      - COLLECTION=${RESULT_COLLECTION}
       - MBUS_URI=${MBUS_URI}
     depends_on:
       - redis_db
