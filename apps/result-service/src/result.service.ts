@@ -27,15 +27,15 @@ export class ResultService {
     async getResultsByPuzzle(puzzleId: string): Promise<Result[]> {
         await this.mongoClient.connect();
         const res = await this.collection
-            .find({ puzzleId: new ObjectId(puzzleId) })
+            .find({ puzzleId: puzzleId })
             .toArray() as Result[];
         return res;
     }
 
-    async getResultByUser(userId: string): Promise<Result[]> {
+    async getResultByUser(userName: string): Promise<Result[]> {
       await this.mongoClient.connect();
       const res = await this.collection
-          .find({ userId: new ObjectId(userId) })
+          .find({ userName: userName })
           .toArray() as Result[];
       return res;
     }

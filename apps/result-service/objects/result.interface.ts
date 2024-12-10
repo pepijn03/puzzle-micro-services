@@ -1,5 +1,5 @@
 export interface Result {
     puzzleId: string;
-    userId: string;
+    userName: string;
     timespan: number;
 }

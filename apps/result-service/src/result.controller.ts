@@ -11,17 +11,17 @@ export class ResultController {
     return this.resultService.getAllResults();
   }
 
-  @Get('puzzle/:puzzleId')
+  @Get('/puzzle/:puzzleId')
   async getResultsByPuzzle(@Param('puzzleId') puzzleId: string): Promise<Result[]> {
     return this.resultService.getResultsByPuzzle(puzzleId);
   }
 
-  @Get('user/:userId')
-  async getResultsByUser(@Param('userId') userId: string): Promise<Result[]> {
-    return this.resultService.getResultByUser(userId);
+  @Get('/user/:userName')
+  async getResultsByUser(@Param('userName') userName: string): Promise<Result[]> {
+    return this.resultService.getResultByUser(userName);
   }
 
-  @Post()
+  @Post('/add')
   async addResult(@Body() result: Result): Promise<void> {
     return this.resultService.addResult(result);
   }

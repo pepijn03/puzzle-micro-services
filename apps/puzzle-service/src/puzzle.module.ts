@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
 import { PuzzleController } from './puzzle.controller';
 import { PuzzleService } from './puzzle.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 import { MongoClient, ServerApiVersion } from 'mongodb';
@@ -23,11 +23,6 @@ console.log('Connecting to MongoDB at:', process.env.MONGODB_URI);
     ConfigModule.forRoot({
       envFilePath: '../../.env',
     }),
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore,
-      url: process.env.REDIS_URL ,
-    }),
     ClientsModule.register([
       {
         name: 'RABBITMQ_CLIENT',
@@ -41,6 +36,11 @@ console.log('Connecting to MongoDB at:', process.env.MONGODB_URI);
         },
       },
     ]),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      url: process.env.REDIS_URL ,
+    }),
   ],
   controllers: [PuzzleController],
   providers: [PuzzleService, {
