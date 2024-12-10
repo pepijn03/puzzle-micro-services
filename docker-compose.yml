@@ -1,52 +1,16 @@
-version: '3.8'
-
 services:
-  dev:
-    container_name: puzzle-micro-services-dev
-    user-service:
-      build:
-        context: .
-        dockerfile: ./apps/user-service/Dockerfile        
-      ports:
-        - '3001:3001'
-
-    progress-service:
-      build:
-        context: .
-        dockerfile: ./apps/progress-service/Dockerfile
-      ports:
-        - '3002:3002'
-
-    puzzle-service:
-      build:
-        context: .
-        dockerfile: ./apps/puzzle-service/Dockerfile
-      ports:
-        - '3003:3003'
-      environment:
-        - REDIS_URL=redis://host.docker.internal:6379
-        - MONGO_URI=${MONGODB_URI}
-        - DATABASE=${DATABASE}
-        - COLLECTION=${COLLECTION}
-        - MBUS_URI=${MBUS_URI}
-      depends_on:
-        - redis_db
-
-    redis_db:
-      image: redis
-      ports:
-        - '6379:6379'
-
-  prod:
-    container_name: puzzle-micro-services-prod
-    user-service:
+  user-service:
     build:
       context: .
-      dockerfile: ./apps/user-service/Dockerfile
+      dockerfile: ./apps/user-service/Dockerfile        
     ports:
       - '3001:3001'
     environment:
-      - NODE_ENV=production
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
 
   progress-service:
     build:
@@ -54,8 +18,6 @@ services:
       dockerfile: ./apps/progress-service/Dockerfile
     ports:
       - '3002:3002'
-    environment:
-      - NODE_ENV=production
 
   puzzle-service:
     build:
@@ -64,19 +26,39 @@ services:
     ports:
       - '3003:3003'
     environment:
-      - NODE_ENV=production
-      - REDIS_URL=redis://host.docker.internal:6379
-      - MONGO_URI=${MONGODB_URI}
+      - REDIS_URI=redis://redis_db:6379
+      - MONGODB_URI=${MONGODB_URI}
       - DATABASE=${DATABASE}
-      - COLLECTION=${COLLECTION}
+      - COLLECTION=${PUZZLE_COLLECTION}
       - MBUS_URI=${MBUS_URI}
     depends_on:
       - redis_db
+    networks:
+      - microservices
+
+  result-service:
+    build:
+      context: .
+      dockerfile: ./apps/result-service/Dockerfile
+    ports:
+      - '3004:3004'
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - DATABASE=${DATABASE}
+      - COLLECTION=${RESULT_COLLECTION}
+      - MBUS_URI=${MBUS_URI}
+    depends_on:
+      - redis_db
+    networks:
+      - microservices
 
   redis_db:
     image: redis
     ports:
       - '6379:6379'
-  
-    
-  
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    driver: bridge

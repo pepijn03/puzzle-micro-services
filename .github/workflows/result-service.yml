@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Puzzle Service CI
+name: Result Service CI
 
 on:
   workflow_run:
@@ -36,9 +36,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
     - run: pnpm install
-    - run: pnpm build:puzzle
+    - run: pnpm build:result
 
-    
+
   push-image-to-dockerhub:
       runs-on: ubuntu-latest
   
@@ -65,7 +65,7 @@ jobs:
           uses: docker/build-push-action@v3
           with:
             context: .
-            file: ./apps/puzzle-service/Dockerfile
+            file: ./apps/result-service/Dockerfile
             push: true
-            tags: pepijn03/puzzle-service:latest
+            tags: pepijn03/result-service:latest
   

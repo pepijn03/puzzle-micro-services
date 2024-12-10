@@ -4,8 +4,10 @@
 name: Progress Service CI
 
 on:
-  pull_request:
-    branches: [ "main", "dev" ]
+  workflow_run:
+    workflows: ["Test Services"]
+    types:
+      - completed
 
 jobs:
   build-application:
@@ -14,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [23.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -35,7 +37,6 @@ jobs:
         cache: 'pnpm'
     - run: pnpm install
     - run: pnpm build:progress
-    - run: pnpm test
 
    
 

@@ -1,20 +1,15 @@
 import { Module } from '@nestjs/common';
-import { PuzzleController } from './puzzle.controller';
-import { PuzzleService } from './puzzle.service';
-import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
+import { ResultController } from './result.controller';
+import { ResultService } from './result.service';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrometheusModule } from "@willsoto/nestjs-prometheus";
-import { MongoClient, ServerApiVersion } from 'mongodb';
-import { PuzzleConsumer } from './puzzle.consumer';
 // Load the dotenv dependency and call the config method on the imported object
 require('dotenv').config();
 
 // Log the Redis URL to verify it's being read correctly
-console.log('Connecting to Redis at:', process.env.REDIS_URI);
-console.log('Connecting to RabbitMQ at:', process.env.MBUS_URI);
 console.log('Connecting to MongoDB at:', process.env.MONGODB_URI);
 
 @Module({
@@ -35,15 +30,9 @@ console.log('Connecting to MongoDB at:', process.env.MONGODB_URI);
           }
         },
       },
-    ]),
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore,
-      url: process.env.REDIS_URL ,
-    }),
-  ],
-  controllers: [PuzzleController],
-  providers: [PuzzleService, {
+    ]),],
+  controllers: [ResultController],
+  providers: [ResultService, {
     provide: 'MONGO_CLIENT',
     useFactory: () => {
       return new MongoClient(process.env.MONGODB_URI || '', {
@@ -61,8 +50,7 @@ console.log('Connecting to MongoDB at:', process.env.MONGODB_URI);
   },
   {
     provide: 'COLLECTION_NAME',
-    useValue: process.env.PUZZLE_COLLECTION || 'defaultCollection'
-  }, PuzzleConsumer],
-  exports: [],
+    useValue: process.env.RESULT_COLLECTION || 'defaultCollection'
+  }],
 })
-export class PuzzleServiceModule {}
+export class ResultServiceModule {}
