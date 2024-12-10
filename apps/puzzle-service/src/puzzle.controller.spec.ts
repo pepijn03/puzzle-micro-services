@@ -4,6 +4,8 @@ import { PuzzleController } from './puzzle.controller';
 import { PuzzleService } from './puzzle.service';
 import { Puzzle } from '../objects/puzzle.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
 
 // Mock MongoDB Classes
 class MockMongoClient {
@@ -57,6 +59,24 @@ describe('PuzzleController', () => {
     mockCollection = mockMongoClient.db().collection('puzzles');
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: '../../.env',
+        }),
+        ClientsModule.register([
+          {
+            name: 'RABBITMQ_CLIENT',
+            transport: Transport.RMQ,
+            options: {
+              urls: [process.env.MBUS_URI],
+              queue: 'main_queue',
+              queueOptions: {
+                durable: false,
+              }
+            },
+          },
+        ]),
+      ],
       controllers: [PuzzleController],
       providers: [
         {

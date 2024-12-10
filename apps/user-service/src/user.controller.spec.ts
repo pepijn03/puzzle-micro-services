@@ -3,6 +3,8 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserEntity } from '../objects/user.entity';
 import { FriendEntity } from '../objects/friend.entity';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -33,6 +35,24 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: '../../.env',
+        }),
+        ClientsModule.register([
+          {
+            name: 'RABBITMQ_CLIENT',
+            transport: Transport.RMQ,
+            options: {
+              urls: [process.env.MBUS_URI],
+              queue: 'main_queue',
+              queueOptions: {
+                durable: false,
+              }
+            },
+          },
+        ]),
+      ],
       controllers: [UserController],
       providers: [
         {
