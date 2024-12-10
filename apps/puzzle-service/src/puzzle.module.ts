@@ -61,7 +61,7 @@ console.log('Connecting to MongoDB at:', process.env.MONGODB_URI);
   },
   {
     provide: 'COLLECTION_NAME',
-    useValue: process.env.COLLECTION || 'defaultCollection'
+    useValue: process.env.PUZZLE_COLLECTION || 'defaultCollection'
   }, PuzzleConsumer],
   exports: [],
 })
