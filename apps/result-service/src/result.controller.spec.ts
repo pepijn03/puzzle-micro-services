@@ -3,6 +3,7 @@ import { ResultController } from './result.controller';
 import { ResultService } from './result.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
 describe('ResultServiceController', () => {
   let resultServiceController: ResultController;
@@ -49,7 +50,7 @@ describe('ResultServiceController', () => {
           provide: 'COLLECTION_NAME',
           useValue: process.env.RESULT_COLLECTION || 'defaultCollection'
         }
-      ]],
+      ],
     }).compile();
 
     resultServiceController = app.get<ResultController>(ResultController);
