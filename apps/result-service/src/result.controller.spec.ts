@@ -28,7 +28,28 @@ describe('ResultServiceController', () => {
         ]),
       ],
       controllers: [ResultController],
-      providers: [ResultService],
+      providers: [ResultService,
+        {
+          provide: 'MONGO_CLIENT',
+          useFactory: () => {
+            return new MongoClient(process.env.MONGODB_URI || '', {
+              serverApi: {
+                version: ServerApiVersion.v1,
+                strict: true,
+                deprecationErrors: true,
+              }
+            });
+          }
+        },
+        {
+          provide: 'DATABASE_NAME',
+          useValue: process.env.DATABASE || 'defaultDatabase'
+        },
+        {
+          provide: 'COLLECTION_NAME',
+          useValue: process.env.RESULT_COLLECTION || 'defaultCollection'
+        }
+      ]],
     }).compile();
 
     resultServiceController = app.get<ResultController>(ResultController);
