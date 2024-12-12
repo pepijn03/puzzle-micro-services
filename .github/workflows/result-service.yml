@@ -4,10 +4,10 @@
 name: Result Service CI
 
 on:
-  workflow_run:
-    workflows: ["Test Services"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+      - dev
 
 jobs:
   build-application:
