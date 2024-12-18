@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ResultService } from './result.service';
 import { Result } from '../objects/result.interface';
 
-@Controller('results')
+@Controller('/results')
 export class ResultController {
   constructor(private readonly resultService: ResultService) {}
 

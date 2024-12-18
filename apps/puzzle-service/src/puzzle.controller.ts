@@ -3,7 +3,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { PuzzleService } from './puzzle.service';
 import { Puzzle } from '../objects/puzzle.interface';
 
-@Controller()
+@Controller('/puzzles')
 export class PuzzleController {
   private readonly logger = new Logger(PuzzleController.name);
 

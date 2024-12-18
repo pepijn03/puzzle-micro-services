@@ -1,7 +1,7 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ProgressService } from './progress.service';
 
-@Controller()
+@Controller('/progress')
 export class ProgressController {
   private readonly logger = new Logger(ProgressController.name);
 
