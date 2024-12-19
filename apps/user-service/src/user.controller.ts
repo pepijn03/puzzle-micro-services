@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 import { UserEntity } from '../objects/user.entity';
 import { FriendEntity } from '../objects/friend.entity';
 
-@Controller()
+@Controller('/users')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
